@@ -2,3 +2,5 @@ __pycache__/
 *.log
 *.pyc
 logparser.toml
+quake_log.db
+.idea/
