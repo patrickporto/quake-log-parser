@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "quake-log-parser"
+version = "1.0.0"
+description = ""
+authors = ["Patrick Porto <patrick.s.porto@gmail.com>"]
+readme = "README.md"
+packages = [{include = "quake_log_parser"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+click = "^8.1.7"
+requests = "^2.31.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.1.1"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
