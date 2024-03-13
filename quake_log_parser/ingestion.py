@@ -43,13 +43,14 @@ def run():
 
         for file in settings.INGESTION_PATH.iterdir():
             print(f"Ingesting file [bold magenta]{file.name}[/bold magenta]")
-            idempotency_key = None
             with open(file, "r") as log_file:
-                if idempotency_key is None:
-                    idempotency_key = zlib.adler32(log_file.read().encode())
-                else:
-                    idempotency_key = zlib.adler32(log_file.read().encode(), idempotency_key)
-            print(f"Idempotency key: [bold magenta]{idempotency_key}[/bold magenta]")
-            with open(file, "r") as log_file:
+                idempotency_key = None
+                while buffer := log_file.read(STREAM_CHUNK_SIZE):
+                    if idempotency_key is None:
+                        idempotency_key = zlib.adler32(buffer.encode())
+                    else:
+                        idempotency_key = zlib.adler32(buffer.encode(), idempotency_key)
+                print(f"Idempotency key: [bold magenta]{idempotency_key}[/bold magenta]")
+                log_file.seek(0)
                 for row_number, line in enumerate(log_file):
                     conn.execute(f"INSERT INTO log_record VALUES ('{hash}', {row_number}, '{line}')")
