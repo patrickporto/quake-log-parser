@@ -1,4 +1,4 @@
-from cli import cli
+from quake_log_parser.cli import cli
 import duckdb
 from quake_log_parser import settings
 from rich import print

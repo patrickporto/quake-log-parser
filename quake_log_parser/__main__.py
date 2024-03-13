@@ -1,7 +1,11 @@
-from cli import cli
-import source
-import player_ranking
-import ingestion
+from quake_log_parser.cli import cli
+from quake_log_parser import source  # noqa
+from quake_log_parser import player_ranking  # noqa
+from quake_log_parser import ingestion  # noqa
+
+def main():
+    cli()
+
 
 if __name__ == "__main__":
-    cli()
+    main()

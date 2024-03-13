@@ -1,4 +1,4 @@
-from cli import cli
+from quake_log_parser.cli import cli
 import toml
 import click
 from rich import print
