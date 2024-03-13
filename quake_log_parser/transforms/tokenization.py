@@ -18,10 +18,6 @@ class Token:
         self.value = (self.value + value).strip()
 
 
-def clean_tokens(tokens):
-    return [token for token in tokens if token.value != '']
-
-
 COMMAND_TOKENS = [
     'InitGame',
     'Exit',
@@ -33,13 +29,6 @@ COMMAND_TOKENS = [
     'Kill',
     'Item'
 ]
-
-
-def recognize_entities(tokens):
-    for token in tokens:
-        if token.value in COMMAND_TOKENS:
-            token.entity = Entity.COMMAND
-    return tokens
 
 
 class Tokenizer:
@@ -81,5 +70,15 @@ class Tokenizer:
             tokens[-1].append_value(record_token)
             log_record_token_index += 1
 
-        cleaned_tokens = clean_tokens(tokens)
-        return recognize_entities(cleaned_tokens)
+        cleaned_tokens = self.clean_tokens(tokens)
+        return self.recognize_entities(cleaned_tokens)
+
+    def recognize_entities(self, tokens):
+        for token in tokens:
+            if token.value in COMMAND_TOKENS:
+                token.entity = Entity.COMMAND
+        return tokens
+
+
+    def clean_tokens(self, tokens):
+        return [token for token in tokens if token.value != '']
