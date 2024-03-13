@@ -71,3 +71,15 @@ def test_kill_command():
     ]
     tokenizer = Tokenizer()
     assert tokenizer.tokenize(log_record) == expected_tokens
+
+def test_client_user_info_changed():
+    log_record = (r'20:34 ClientUserinfoChanged: 2 n\Dono da Bola\t\0\model\sarge/krusade\hmodel\sarge/krusade\g_redteam\\g_blueteam\\c1\5\c2\5\hc\95\w\0\l\0\tt\0\tl\0')
+    expected_tokens = [
+        Token(value='20:34', entity=Entity.TIME),
+        Token(value='ClientUserinfoChanged', entity=Entity.COMMAND),
+        Token(value=':', entity=Entity.DELIMITER),
+        Token(value='2', entity=Entity.COMMAND_ARGUMENT),
+        Token(value=r'n\Dono da Bola\t\0\model\sarge/krusade\hmodel\sarge/krusade\g_redteam\\g_blueteam\\c1\5\c2\5\hc\95\w\0\l\0\tt\0\tl\0', entity=Entity.COMMAND_ARGUMENT),
+    ]
+    tokenizer = Tokenizer()
+    assert tokenizer.tokenize(log_record) == expected_tokens

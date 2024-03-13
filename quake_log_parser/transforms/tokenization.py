@@ -18,8 +18,12 @@ class Token:
     entity: Entity = Entity.UNKNOWN
     value: str = ''
 
-    def append_value(self, value):
-        self.value = (self.value + value).strip()
+    def append_value(self, value, strip=True):
+        new_value = (self.value + value)
+        if strip:
+            self.value = new_value.strip()
+        else:
+            self.value = new_value
 
 
 COMMAND_TOKENS = [
@@ -64,7 +68,7 @@ class Tokenizer:
     def get_token(self, character):
         if character.isdigit():
             return Token(entity=Entity.NUMBER, value=character)
-        elif character.isalpha() or character in ['_', '<', '>']:
+        elif character.isalpha() or character in ['_', '<', '>', '\\']:
             return Token(entity=Entity.WORD, value=character)
         elif character in DELIMITERS:
             return Token(entity=Entity.DELIMITER, value=character)
@@ -133,5 +137,17 @@ class Tokenizer:
                 is_argument = True
             if is_argument and token.entity not in [Entity.COMMAND, Entity.DELIMITER, Entity.KEYWORD]:
                 token.entity = Entity.COMMAND_ARGUMENT
+            result.append(token)
+        return self.escape_arguments(result)
+
+    def escape_arguments(self, tokens):
+        result = []
+        escape = False
+        for token in tokens:
+            if (token.entity == Entity.COMMAND_ARGUMENT and token.value.startswith('n\\')):
+                escape = True
+            elif escape:
+                result[-1].append_value(token.value, strip=False)
+                continue
             result.append(token)
         return result
