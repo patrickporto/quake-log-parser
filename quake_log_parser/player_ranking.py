@@ -1,7 +1,8 @@
 import json
 
+import click
+
 from quake_log_parser.cli import cli
-from rich import print
 
 from quake_log_parser.repositories.log_record_repository import LogRecordRepository
 from quake_log_parser.transforms.tokenization import Tokenizer, Token, Entity
@@ -84,4 +85,4 @@ def player_ranking():
     for game_key, game in games.items():
         games[game_key] = game.to_dict()
 
-    print(json.dumps(games))
+    click.echo(json.dumps(games))
