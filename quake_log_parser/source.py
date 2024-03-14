@@ -1,9 +1,10 @@
+import duckdb
+
 from quake_log_parser.cli import cli
-import toml
 import click
 from rich import print
-from quake_log_parser.models.source_url import SourceUrl
 from quake_log_parser import settings
+import hashlib
 
 
 @cli.group()
@@ -14,12 +15,8 @@ def source():
 @source.command()
 @click.argument("url")
 def add_url(url: str):
-    print(f"Adding URL [bold magenta]{url}[/bold magenta]")
-    with open(settings.CONFIG_NAME, "w+") as logparser_raw:
-        logparser_config = toml.load(logparser_raw)
-        if "source" not in logparser_config:
-            logparser_config["source"] = {}
-        if "urls" not in logparser_config["source"]:
-            logparser_config["source"]["urls"] = []
-        logparser_config["source"]["urls"].append(SourceUrl(url=url).model_dump())
-        toml.dump(logparser_config, logparser_raw)
+    with duckdb.connect(settings.DATABASE_FILE) as conn:
+        conn.execute("CREATE TABLE IF NOT EXISTS source (hash VARCHAR(64) PRIMARY KEY , uri VARCHAR(256))")
+        print(f"Adding URL [bold magenta]{url}[/bold magenta]")
+        url_hash = hashlib.sha256(url.encode()).hexdigest()
+        conn.execute(f"INSERT INTO source VALUES ('{url_hash}', '{url}')")

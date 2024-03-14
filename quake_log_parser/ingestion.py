@@ -18,18 +18,13 @@ STREAM_CHUNK_SIZE = 8192
 @ingestion.command()
 def pull():
     settings.INGESTION_PATH.mkdir(parents=True, exist_ok=True)
-    with open(settings.CONFIG_NAME, "r") as logparser_raw:
-        logparser_config = toml.load(logparser_raw)
-        if "source" not in logparser_config:
-            print("No source defined")
-            return
-        if "urls" not in logparser_config["source"]:
-            print("No URLs defined")
-            return
-        for url in logparser_config["source"]["urls"]:
-            print(f"Downloading URL [bold magenta]{url['url']}[/bold magenta]")
-            filename = url['url'].split("/")[-1]
-            with requests.get(url['url'], stream=True) as response:
+    with duckdb.connect(settings.DATABASE_FILE) as conn:
+        conn.execute("CREATE TABLE IF NOT EXISTS source (hash VARCHAR(64) PRIMARY KEY , uri VARCHAR(256))")
+        result = conn.execute("SELECT uri FROM source")
+        for (uri,) in result.fetchall():
+            print(f"Downloading URL [bold magenta]{uri}[/bold magenta]")
+            filename = uri.split("/")[-1]
+            with requests.get(uri, stream=True) as response:
                 response.raise_for_status()
                 with open(settings.INGESTION_PATH / filename, "wb") as file:
                     for chunk in response.iter_content(chunk_size=STREAM_CHUNK_SIZE):
