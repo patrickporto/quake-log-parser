@@ -36,7 +36,6 @@ def pull():
 def run():
     log_record_repository = LogRecordRepository()
     for file in settings.INGESTION_PATH.iterdir():
-        print(f"Ingesting file [bold magenta]{file.name}[/bold magenta]")
         with open(file, "r") as log_file:
             file_checksum = None
             while buffer := log_file.read(STREAM_CHUNK_SIZE):
@@ -44,7 +43,9 @@ def run():
                     file_checksum = zlib.adler32(buffer.encode())
                 else:
                     file_checksum = zlib.adler32(buffer.encode(), file_checksum)
-            print(f"Idempotency key: [bold magenta]{file_checksum}[/bold magenta]")
+            print(
+                f"Ingesting file [bold magenta]{file.name}[/bold magenta] (checksum: {file_checksum})"
+            )
             log_file.seek(0)
             for row_number, line in enumerate(log_file):
                 log_record_repository.add_log_record(

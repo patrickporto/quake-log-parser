@@ -23,4 +23,4 @@ class LogRecordRepository:
 
     def get_log_records(self):
         with duckdb.connect(settings.DATABASE_FILE) as conn:
-            return conn.execute("SELECT * FROM log_record").fetchall()
+            return conn.execute("SELECT log FROM log_record").fetchall()
