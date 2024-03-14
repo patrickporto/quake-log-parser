@@ -5,6 +5,7 @@ class Game:
     def __init__(self):
         self.players = {}
         self.kills = {}
+        self.total_kills = 0
 
     def add_player(self, player_id):
         self.players[player_id] = player_id
@@ -14,6 +15,7 @@ class Game:
         self.players[player_id] = player_name
 
     def add_kill(self, killer, victim):
+        self.total_kills += 1
         if killer == WORLD_ID:
             self.kills[victim] = (
                 self.kills.get(victim, 0) - 1 if self.kills.get(victim, 0) > 0 else 0
@@ -27,4 +29,4 @@ class Game:
             self.players[player_id]: player_score
             for player_id, player_score in self.kills.items()
         }
-        return {"players": players, "kills": kills}
+        return {"total_kills": self.total_kills, "players": players, "kills": kills}
