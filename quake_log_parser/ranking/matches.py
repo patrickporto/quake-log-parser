@@ -1,54 +1,14 @@
-import json
-
-import click
-
-from quake_log_parser.cli import cli
-
-from quake_log_parser.repositories.log_record_repository import LogRecordRepository
-from quake_log_parser.parser.tokenization import Tokenizer
 from quake_log_parser.parser.token import Token
 from quake_log_parser.parser.token_entity import Entity
-
-WORLD_ID = "1022"
-
-
-class Game:
-    def __init__(self):
-        self.players = {}
-        self.kills = {}
-
-    def add_player(self, player_id):
-        self.players[player_id] = player_id
-        self.kills[player_id] = 0
-
-    def change_player_name(self, player_id, player_name):
-        self.players[player_id] = player_name
-
-    def add_kill(self, killer, victim):
-        if killer == WORLD_ID:
-            self.kills[victim] = (
-                self.kills.get(victim, 0) - 1 if self.kills.get(victim, 0) > 0 else 0
-            )
-        else:
-            self.kills[killer] = self.kills.get(killer, 0) + 1
-
-    def to_dict(self):
-        players = list(set(self.players.values()))
-        kills = {
-            self.players[player_id]: player_score
-            for player_id, player_score in self.kills.items()
-        }
-        return {"players": players, "kills": kills}
+from quake_log_parser.parser.tokenization import Tokenizer
+from quake_log_parser.ranking.game import Game
 
 
-@cli.command()
-def player_ranking():
+def matches_ranking(log_records: list[str]):
     games = {}
     current_game = None
 
-    log_record_repository = LogRecordRepository()
-
-    for (log_record,) in log_record_repository.get_log_records():
+    for log_record in log_records:
         tokenizer = Tokenizer()
         tokens = tokenizer.tokenize(log_record)
         match tokens:
@@ -85,5 +45,4 @@ def player_ranking():
 
     for game_key, game in games.items():
         games[game_key] = game.to_dict()
-
-    click.echo(json.dumps(games))
+    return games
