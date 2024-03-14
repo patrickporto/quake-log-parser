@@ -1,10 +1,10 @@
 from quake_log_parser.cli import cli
-import duckdb
 from quake_log_parser import settings
 from rich import print
 import requests
 import zlib
 
+from quake_log_parser.repositories.log_record_repository import LogRecordRepository
 from quake_log_parser.repositories.source_repository import SourceRepository
 
 
@@ -34,25 +34,21 @@ def pull():
 
 @ingestion.command()
 def run():
-    with duckdb.connect(settings.DATABASE_FILE) as conn:
-        conn.execute(
-            "CREATE TABLE IF NOT EXISTS log_record (idempotency_key VARCHAR(64), row_number INTEGER, log TEXT)"
-        )
-
-        for file in settings.INGESTION_PATH.iterdir():
-            print(f"Ingesting file [bold magenta]{file.name}[/bold magenta]")
-            with open(file, "r") as log_file:
-                idempotency_key = None
-                while buffer := log_file.read(STREAM_CHUNK_SIZE):
-                    if idempotency_key is None:
-                        idempotency_key = zlib.adler32(buffer.encode())
-                    else:
-                        idempotency_key = zlib.adler32(buffer.encode(), idempotency_key)
-                print(
-                    f"Idempotency key: [bold magenta]{idempotency_key}[/bold magenta]"
+    log_record_repository = LogRecordRepository()
+    for file in settings.INGESTION_PATH.iterdir():
+        print(f"Ingesting file [bold magenta]{file.name}[/bold magenta]")
+        with open(file, "r") as log_file:
+            file_checksum = None
+            while buffer := log_file.read(STREAM_CHUNK_SIZE):
+                if file_checksum is None:
+                    file_checksum = zlib.adler32(buffer.encode())
+                else:
+                    file_checksum = zlib.adler32(buffer.encode(), file_checksum)
+            print(f"Idempotency key: [bold magenta]{file_checksum}[/bold magenta]")
+            log_file.seek(0)
+            for row_number, line in enumerate(log_file):
+                log_record_repository.add_log_record(
+                    source_checksum=str(file_checksum),
+                    row_number=row_number,
+                    log_record=line,
                 )
-                log_file.seek(0)
-                for row_number, line in enumerate(log_file):
-                    conn.execute(
-                        f"INSERT INTO log_record VALUES ('{hash}', {row_number}, '{line}')"
-                    )
