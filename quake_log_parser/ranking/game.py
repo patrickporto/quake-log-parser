@@ -24,9 +24,9 @@ class Game:
             self.kills[killer] = self.kills.get(killer, 0) + 1
 
     def to_dict(self):
-        players = list(set(self.players.values()))
-        kills = {
-            self.players[player_id]: player_score
-            for player_id, player_score in self.kills.items()
-        }
+        players = []
+        kills = {}
+        for player_id, player_name in self.players.items():
+            players.append(player_name)
+            kills[player_name] = self.kills[player_id]
         return {"total_kills": self.total_kills, "players": players, "kills": kills}

@@ -10,4 +10,4 @@ run: build
 		poetry run python quake_log_parser report player-ranking > player-ranking-output.json
 
 test: build
-	@docker run -it --rm quakelogparser pytest .
+	@docker run -it --rm quakelogparser pytest . -vv
