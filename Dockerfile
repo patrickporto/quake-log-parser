@@ -10,6 +10,8 @@ RUN pip install pipx && pipx ensurepath && pipx install poetry==$POETRY_VERSION
 
 FROM base as service
 
+ENV PYTHONPATH=/app
+
 WORKDIR /app
 
 COPY poetry.lock pyproject.toml ./
@@ -17,5 +19,3 @@ COPY poetry.lock pyproject.toml ./
 RUN pipx run poetry install -vvv
 
 COPY . ./
-
-ENTRYPOINT ["pipx", "run", "poetry", "run"]

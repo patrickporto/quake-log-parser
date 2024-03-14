@@ -13,3 +13,9 @@ This is a simple log parser for Quake 3 Arena games.
 ```
 make run
 ```
+
+## Running the tests
+
+```
+make test
+```
