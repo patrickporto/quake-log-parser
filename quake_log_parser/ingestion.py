@@ -2,7 +2,6 @@ from quake_log_parser.cli import cli
 import duckdb
 from quake_log_parser import settings
 from rich import print
-import toml
 import requests
 import zlib
 
@@ -19,7 +18,9 @@ STREAM_CHUNK_SIZE = 8192
 def pull():
     settings.INGESTION_PATH.mkdir(parents=True, exist_ok=True)
     with duckdb.connect(settings.DATABASE_FILE) as conn:
-        conn.execute("CREATE TABLE IF NOT EXISTS source (hash VARCHAR(64) PRIMARY KEY , uri VARCHAR(256))")
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS source (hash VARCHAR(64) PRIMARY KEY , uri VARCHAR(256))"
+        )
         result = conn.execute("SELECT uri FROM source")
         for (uri,) in result.fetchall():
             print(f"Downloading URL [bold magenta]{uri}[/bold magenta]")
@@ -34,7 +35,9 @@ def pull():
 @ingestion.command()
 def run():
     with duckdb.connect(settings.DATABASE_FILE) as conn:
-        conn.execute("CREATE TABLE IF NOT EXISTS log_record (idempotency_key VARCHAR(64), row_number INTEGER, log TEXT)")
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS log_record (idempotency_key VARCHAR(64), row_number INTEGER, log TEXT)"
+        )
 
         for file in settings.INGESTION_PATH.iterdir():
             print(f"Ingesting file [bold magenta]{file.name}[/bold magenta]")
@@ -45,7 +48,11 @@ def run():
                         idempotency_key = zlib.adler32(buffer.encode())
                     else:
                         idempotency_key = zlib.adler32(buffer.encode(), idempotency_key)
-                print(f"Idempotency key: [bold magenta]{idempotency_key}[/bold magenta]")
+                print(
+                    f"Idempotency key: [bold magenta]{idempotency_key}[/bold magenta]"
+                )
                 log_file.seek(0)
                 for row_number, line in enumerate(log_file):
-                    conn.execute(f"INSERT INTO log_record VALUES ('{hash}', {row_number}, '{line}')")
+                    conn.execute(
+                        f"INSERT INTO log_record VALUES ('{hash}', {row_number}, '{line}')"
+                    )

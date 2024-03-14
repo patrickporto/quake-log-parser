@@ -3,6 +3,7 @@ from quake_log_parser import source  # noqa
 from quake_log_parser import player_ranking  # noqa
 from quake_log_parser import ingestion  # noqa
 
+
 def main():
     cli()
 

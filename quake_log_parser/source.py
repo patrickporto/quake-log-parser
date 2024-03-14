@@ -16,7 +16,9 @@ def source():
 @click.argument("url")
 def add_url(url: str):
     with duckdb.connect(settings.DATABASE_FILE) as conn:
-        conn.execute("CREATE TABLE IF NOT EXISTS source (hash VARCHAR(64) PRIMARY KEY , uri VARCHAR(256))")
+        conn.execute(
+            "CREATE TABLE IF NOT EXISTS source (hash VARCHAR(64) PRIMARY KEY , uri VARCHAR(256))"
+        )
         print(f"Adding URL [bold magenta]{url}[/bold magenta]")
         url_hash = hashlib.sha256(url.encode()).hexdigest()
         conn.execute(f"INSERT INTO source VALUES ('{url_hash}', '{url}')")
