@@ -39,10 +39,12 @@ def matches_ranking(log_records: list[str]):
                 ]
                 killer = arguments[0].value
                 victim = arguments[1].value
-                games[current_game].add_kill(killer, victim)
+                cause = arguments[-1].value
+
+                games[current_game].add_kill(killer, victim, cause)
             case _:
                 ...
 
     for game_key, game in games.items():
-        games[game_key] = game.to_dict()
+        games[game_key] = game.get_ranking()
     return games

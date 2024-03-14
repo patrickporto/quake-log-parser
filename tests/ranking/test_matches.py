@@ -12,5 +12,10 @@ def test_simple_match(simple_match_fixture):
                 "Dono da Bola": 0,
                 "Zeh": 0,
             },
+            "kills_by_means": {
+                "MOD_TRIGGER_HURT": 2,
+                "MOD_FALLING": 1,
+                "MOD_ROCKET": 1,
+            },
         }
     }
