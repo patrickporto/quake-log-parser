@@ -28,13 +28,21 @@ class Tokenizer:
         for character in list(log_record):
             token = self.get_token(character)
             tokens.append(token)
-        tokens = self.recognize_words(tokens)
-        tokens = self.recognize_numbers(tokens)
-        tokens = self.recognize_time(tokens)
-        tokens = self.recognize_commands(tokens)
-        tokens = self.recognize_keywords(tokens)
-        tokens = self.recognize_arguments(tokens)
-        return self.clean_tokens(tokens)
+        pipeline = [
+            self.recognize_words,
+            self.recognize_numbers,
+            self.recognize_time,
+            self.recognize_commands,
+            self.recognize_keywords,
+            self.recognize_arguments,
+            self.clean_tokens,
+        ]
+        return self.apply_pipeline(pipeline, tokens)
+
+    def apply_pipeline(self, pipeline, tokens):
+        for method in pipeline:
+            tokens = method(tokens)
+        return tokens
 
     def get_token(self, character):
         if character.isdigit():
