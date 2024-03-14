@@ -16,3 +16,4 @@ def add_url(url: str):
     print(f"Adding URL [bold magenta]{url}[/bold magenta]")
     source_repository = SourceRepository()
     source_repository.add_source(url)
+    print(f"URL [bold magenta]{url}[/bold magenta] added successfully")

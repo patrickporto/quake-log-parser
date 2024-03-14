@@ -30,6 +30,7 @@ def pull():
             with open(settings.INGESTION_PATH / filename, "wb") as file:
                 for chunk in response.iter_content(chunk_size=STREAM_CHUNK_SIZE):
                     file.write(chunk)
+        print(f"URL [bold magenta]{uri}[/bold magenta] downloaded successfully")
 
 
 @ingestion.command()
@@ -53,3 +54,4 @@ def run():
                     row_number=row_number,
                     log_record=line,
                 )
+    print("Ingestion complete")
