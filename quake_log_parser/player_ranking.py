@@ -5,8 +5,9 @@ import click
 from quake_log_parser.cli import cli
 
 from quake_log_parser.repositories.log_record_repository import LogRecordRepository
-from quake_log_parser.transforms.tokenization import Tokenizer, Token, Entity
-
+from quake_log_parser.parser.tokenization import Tokenizer
+from quake_log_parser.parser.token import Token
+from quake_log_parser.parser.token_entity import Entity
 
 WORLD_ID = "1022"
 

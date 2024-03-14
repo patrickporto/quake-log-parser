@@ -1,4 +1,6 @@
-from quake_log_parser.transforms.tokenization import Tokenizer, Token, Entity
+from quake_log_parser.parser.tokenization import Tokenizer
+from quake_log_parser.parser.token import Token
+from quake_log_parser.parser.token_entity import Entity
 
 
 def test_empty_log_record():

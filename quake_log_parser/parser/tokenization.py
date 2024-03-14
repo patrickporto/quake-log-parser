@@ -1,30 +1,5 @@
-from dataclasses import dataclass
-from enum import Enum
-
-
-class Entity(str, Enum):
-    UNKNOWN = "unknown"
-    WORD = "word"
-    DELIMITER = "delimiter"
-    NUMBER = "number"
-    TIME = "time"
-    COMMAND = "command"
-    COMMAND_ARGUMENT = "command_argument"
-    KEYWORD = "keyword"
-
-
-@dataclass
-class Token:
-    entity: Entity = Entity.UNKNOWN
-    value: str = ""
-
-    def append_value(self, value, strip=True):
-        new_value = self.value + value
-        if strip:
-            self.value = new_value.strip()
-        else:
-            self.value = new_value
-
+from quake_log_parser.parser.token import Token
+from quake_log_parser.parser.token_entity import Entity
 
 COMMAND_TOKENS = [
     "InitGame",
