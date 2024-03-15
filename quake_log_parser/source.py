@@ -11,9 +11,9 @@ def source():
 
 
 @source.command()
-@click.argument("url")
-def add_url(url: str):
-    print(f"Adding URL [bold magenta]{url}[/bold magenta]")
+@click.argument("uri")
+def add(uri: str):
+    print(f"Adding URL [bold magenta]{uri}[/bold magenta]")
     source_repository = SourceRepository()
-    source_repository.add_source(url)
-    print(f"URL [bold magenta]{url}[/bold magenta] added successfully")
+    source_repository.add_source(uri)
+    print(f"URL [bold magenta]{uri}[/bold magenta] added successfully")
