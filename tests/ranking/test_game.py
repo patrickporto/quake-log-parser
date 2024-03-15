@@ -12,6 +12,13 @@ def test_player_kill_player():
     assert game.kills[3] == 0
 
 
+def test_player_kill_self():
+    game = Game()
+    game.add_player(2)
+    game.add_kill(2, 2, cause=DeathCause.MOD_RAILGUN)
+    assert game.kills[2] == 0
+
+
 def test_world_kill_player_without_score():
     game = Game()
     game.add_player(2)

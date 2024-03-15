@@ -22,7 +22,7 @@ class Game:
         self.death_causes[cause] = self.death_causes[cause] + 1
         if killer == WORLD_ID:
             self.kills[victim] = self.kills[victim] - 1 if self.kills[victim] > 0 else 0
-        else:
+        elif killer != victim:
             self.kills[killer] = self.kills[killer] + 1
 
     def get_ranking(self):
